@@ -50,15 +50,14 @@ localhost:9200/test/city/1
 
 <p>When developing with elasticsearch there are 3 main steps we have to consider. <strong>Mapping</strong>, <strong>Indexing</strong>, and <strong>Querying</strong> data</p>
 
-<ol>
-<li>Mapping</li>
-</ol>
+<h3>
+<a id="1-mapping" class="anchor" href="#1-mapping" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Mapping</h3>
 
 <p>Mapping is used to define how elastic should store and index a particular document and it's fields. </p>
 
 <p>However if no mapping was introduced to a specific field on pre-index time, elastic will <a href="https://www.elastic.co/guide/en/elasticsearch/guide/current/dynamic-mapping.html">dynamically</a> add a <strong>generic</strong> type to that field. Although this may sound tempting, it is not! since generic types are very basic and do not meet queries expectations most of the time.</p>
 
-<p>Moving forward with this tutorial we will base our example on the following data schema: </p>
+<p>Moving forward with this tutorial we will base our examples on the following data schema: </p>
 
 <pre><code>{
     "first_name": "bam",
