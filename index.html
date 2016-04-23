@@ -58,6 +58,16 @@ localhost:9200/test/city/1
 
 <p>However if no mapping was introduced to a specific field on pre-index time, elastic will <a href="https://www.elastic.co/guide/en/elasticsearch/guide/current/dynamic-mapping.html">dynamically</a> add a <strong>generic</strong> type to that field. Although this may sound tempting, it is not! since generic types are very basic and do not meet queries expectations most of the time.</p>
 
+<p>Moving forward with this tutorial we will base our example on the following data schema: </p>
+
+<pre><code>{
+    "first_name": "bam",
+    "last_name": "margera",
+    "gender": "male",
+    "age": 36
+}
+</code></pre>
+
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/hrahal/elastic-intro">Elastic-intro</a> is maintained by <a href="https://github.com/hrahal">hrahal</a>.</span>
 
