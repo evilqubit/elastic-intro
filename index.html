@@ -67,6 +67,35 @@ localhost:9200/test/city/1
 }
 </code></pre>
 
+<p>So to make things more efficient we're gunna create the index, type and mapping for the schema in one shot. Something that looks like the following: </p>
+
+<pre><code>PUT localhost:9200/test/
+
+{
+    "mappings": {
+        "users": {
+            "properties": {
+                "age": {
+                    "type": "long"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
+
+</code></pre>
+
+<p>so creating an Index called test, a type called users with 4 fields that it contains</p>
+
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/hrahal/elastic-intro">Elastic-intro</a> is maintained by <a href="https://github.com/hrahal">hrahal</a>.</span>
 
