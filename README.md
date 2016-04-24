@@ -73,4 +73,5 @@ PUT localhost:9200/test/
 }
 
 ```
-so creating an Index called test, a type called users with 4 fields that it contains
+so creating an Index called test, a type called users with 4 fields that it contains.
+note that field types can have the following values: _string_, _date_, _long_, _double_, _boolean_, _ip_, _object_, _nested_, _geo_point_, _geo_shape_
