@@ -33,7 +33,7 @@ When developing with elasticsearch there are 3 main steps we have to consider. *
 
 Mapping is used to define how elastic should store and index a particular document and it's fields. 
 
-However if no mapping was introduced to a specific field on pre-index time, elastic will [dynamically](https://www.elastic.co/guide/en/elasticsearch/guide/current/dynamic-mapping.html) add a **generic** type to that field. Although this may sound tempting, it is not! since generic types are very basic and do not meet queries expectations most of the time.
+However if no mapping was introduced to a specific field on pre-index time, elastic will [dynamically](https://www.elastic.co/guide/en/elasticsearch/guide/current/dynamic-mapping.html) add a **generic** type to that field. Although this may sound tempting, it is NOT! since generic types are very basic and do not meet the query expectations most of the time.
 
 Moving forward with this tutorial we will base our examples on the following data schema: 
 
@@ -46,7 +46,7 @@ Moving forward with this tutorial we will base our examples on the following dat
 }
 ``` 
 
-So to make things more efficient we're gunna create the index, type and mapping for the schema in one shot. Something that looks like the following: 
+So to make things more efficient we're gonna create the index, type and mapping for the schema in one request. Something that looks like the following: 
 
 ```
 PUT localhost:9200/test/
@@ -73,5 +73,82 @@ PUT localhost:9200/test/
 }
 
 ```
-so creating an Index called test, a type called users with 4 fields that it contains.
+so creating an _Index_ called test, a _type_ called users with 4 fields that it contains.
+
 note that field types can have the following values: _string_, _date_, _long_, _double_, _boolean_, _ip_, _object_, _nested_, _geo_point_, _geo_shape_
+
+If everything goes well, we should get the following response: 
+
+```
+{
+  "acknowledged": true
+}
+```
+
+Now that we told elasticsearch what kind of data we want to insert, let's go ahead and index/store it.
+
+###2. Indexing
+
+Indexing/storing is the process of inserting data to ES to make it **searchable** using the _Index API_.
+
+So let's  index 3 simple documents: 
+
+```
+POST localhost:9200/test/users/
+{
+    "first_name": "Bam",
+    "last_name": "Margera",
+    "gender": "male",
+    "age": 36
+}
+
+POST localhost:9200/test/users/
+
+{
+    "first_name": "Jason",
+    "last_name": "Acuña",
+    "gender": "male",
+    "age": 31
+}
+
+POST localhost:9200/test/users/
+
+{
+    "first_name": "Johnny",
+    "last_name": "Knoxville",
+    "gender": "male",
+    "age": 45
+}
+
+```
+
+on success of any of the following docs, we should see a response like this: 
+
+```
+{
+  "_index": "test",
+  "_type": "users",
+  "_id": "AVRQDOka0YBBUjDwpzQQ",
+  "_version": 1,
+  "_shards": {
+    "total": 2,
+    "successful": 1,
+    "failed": 0
+  },
+  "created": true
+}
+```
+
+where __id_ is a generated id by ES.
+
+we can also specify our own id after the type like this: 
+
+```
+POST localhost:9200/test/users/MyID123
+{
+    "first_name": "Bam",
+    "last_name": "Margera",
+    "gender": "male",
+    "age": 36
+}
+```
