@@ -29,13 +29,13 @@ localhost:9200/test/city/1
 
 When developing with elasticsearch there are 3 main steps we have to consider. **Mapping**, **Indexing**, and **Querying** data
 
-1. Mapping
+###1. Mapping
 
 Mapping is used to define how elastic should store and index a particular document and it's fields. 
 
 However if no mapping was introduced to a specific field on pre-index time, elastic will [dynamically](https://www.elastic.co/guide/en/elasticsearch/guide/current/dynamic-mapping.html) add a **generic** type to that field. Although this may sound tempting, it is not! since generic types are very basic and do not meet queries expectations most of the time.
 
-Moving forward with this tutorial we will base our example on the following data schema: 
+Moving forward with this tutorial we will base our examples on the following data schema: 
 
 ```
 {
@@ -45,3 +45,32 @@ Moving forward with this tutorial we will base our example on the following data
     "age": 36
 }
 ``` 
+
+So to make things more efficient we're gunna create the index, type and mapping for the schema in one shot. Something that looks like the following: 
+
+```
+PUT localhost:9200/test/
+
+{
+    "mappings": {
+        "users": {
+            "properties": {
+                "age": {
+                    "type": "long"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
+
+```
+so creating an Index called test, a type called users with 4 fields that it contains
