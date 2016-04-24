@@ -220,9 +220,13 @@ Queries is what we use to get results with **scoring** (relevance)
 
 To ask a question like
  
- - Find WHERE level = "super awesome". using the _match_ query we would write: 
+ - level = "super awesome"
+
+Using the _match_ query for **full-text** that is used on analyzed fields, we would write: 
 
 ```
+POST localhost:9200/test/users/_search
+
 {
     "query": {
         "match": {
@@ -287,13 +291,67 @@ the response will be:
 
 As we can see that the user _Bam_ scored the highest of 0.2712221 since his level was "super awesome ", whereas _Stephanie_ &  _Johnny_ scored an equal 0.09848769 for their level was just "awesome"
 
+
+where as for **exact values** on _non-analyzed_ fields, _numbers_, _dates_, and _Booleans_, it's better to use the _Term Query_ :
+
+ - age = 36
+
+```
+POST localhost:9200/test/users/_search
+
+{
+     "query": {
+        "term": {
+            "age": 36
+        }
+    }
+}
+```
+
+this query will return **only** Bam
+
+To combine more than one query together we can use the _Query clause_  to find: 
+
+ - level = "super awesome" and "age" < 40
+
+```
+POST localhost:9200/test/users/_search
+
+{
+     "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "level": "super awesome"
+                    }
+                },
+                {
+                    "range": {
+                        "age": {
+                            "lt": 40
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+```
+
+Where _must_ is and array that implies **AND**. _bool_ also supports _should_ implying **OR**, and must_not.
+
+Moreover we used the _range_ query with age "lt" **less than** 40. where _range_ also supports "lte", "gt", and "gte" 
+
 ####2. Filters 
 
-Filters are **non-scoring** queries that can be used if the score has no importance. It's returns a _boolean_ answer with yes or no **where the score is always equal to 1**
+Filters are **non-scoring** queries that can be used if the score has no importance. It's returns a _boolean_ that answers with yes or no **where the score is always = 1**
 
 so executing the following filter has no significance: 
 
 ```
+POST localhost:9200/test/users/_search
+
 {
     "filter": {
        "match": {
@@ -310,6 +368,8 @@ Whereas combining this with the previous query will:
  - Find Where level = "super awesome" and only return the "male" gender
 
 ```
+POST localhost:9200/test/users/_search
+
 {
      "query": {
         "match": {
@@ -326,4 +386,5 @@ Whereas combining this with the previous query will:
  
 This will return only 2 users Bam and Johnny **scoring** 0.2712221 and 0.09848769 respectively 
 
-so as ES states it: "As a general rule, use query clauses for full-text search or for any condition that should affect the relevance score, and use filters for everything else."
+So as ES states it: "As a general rule, use query clauses for full-text search or for any condition that should affect the relevance score, and use filters for everything else."
+
