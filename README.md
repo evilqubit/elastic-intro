@@ -390,6 +390,8 @@ To force ES to apply the filter before in order limit the number of docs then ap
 
 
 ```
+POST localhost:9200/test/users/_search
+
 {
     "query": {
         "bool": {
@@ -417,6 +419,8 @@ To force ES to apply the filter before in order limit the number of docs then ap
 
 we would write:
 ```
+POST localhost:9200/test/users/_search
+
 {
     "query": {
         "bool": {
@@ -453,3 +457,108 @@ So as ES states it: "As a general rule, use query clauses for full-text search o
 
 ####c. Aggregations
 
+[Aggregations](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html) is a big part of elasticseach it is used to calculate stats about our data. Divided into 3 different types: 
+
+ - Metrics Aggregations
+ - Bucket Aggregations
+ - Pipeline Aggregations
+ 
+ In this tutorial I'm gonna cover the _Term Aggregations_ which is a part of the Bucket Aggregations. 
+
+ - how many females and males We,v got in our Index/type ?
+
+we can write the following: 
+
+```
+POST localhost:9200/test/users/_search
+
+{
+    "size": 0,
+    "aggs" : {
+        "genders" : {
+            "terms" : { "field" : "gender" }
+        }
+    }
+}
+```
+
+We set "size" = 0 since we don't want to see any search results. just the aggs results. "aggs" is a predefined ES property, followed by "genders" which is a property that we can freely name. We can call it "xyz" if we want.
+
+"terms" implies that that we are performing a term aggregation which specifies the field name that we want to agg > genders. 
+
+response:
+```
+{
+  "took": 7,
+  "timed_out": false,
+  "_shards": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0
+  },
+  "hits": {
+    "total": 3,
+    "max_score": 0,
+    "hits": []
+  },
+  "aggregations": {
+    "genders": {
+      "doc_count_error_upper_bound": 0,
+      "sum_other_doc_count": 0,
+      "buckets": [
+        {
+          "key": "male",
+          "doc_count": 2
+        },
+        {
+          "key": "female",
+          "doc_count": 1
+        }
+      ]
+    }
+  }
+}
+``` 
+
+what we want is every thing inside the bucket array which tells us that we have, 1 female and 2 males. 
+
+The power off aggs is that it can be combines with any filter/query. 
+
+so using the last filter we did, we can simply say: 
+
+```
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "level": "super awesome"
+                    }
+                },
+                {
+                    "range": {
+                        "age": {
+                            "lt": 40
+                        }
+                    }
+                }
+            ],
+            "filter": {
+                "match": {
+                    "gender": "male"
+                }
+            }
+        }    
+    },
+    "aggs" : {
+        "genders" : {
+            "terms" : { "field" : "gender" }
+        }
+    }
+}
+```
+
+This will return Bam with a male count = 1 : )
+
+TADAH! 
