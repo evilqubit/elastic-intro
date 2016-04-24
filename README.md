@@ -214,7 +214,7 @@ on the top level hits.total is the total number of the docs we using an empty se
 
 in the __shards.total_ value is the number of lucene Indexed that elasticsearch created for that index. The default number is always 5 unless we specify otherwise on index creation time. more about shards is explained [here](https://www.elastic.co/guide/en/elasticsearch/guide/current/_add_an_index.html) 
 
-####1. Queries 
+####a. Queries 
 
 Queries is what we use to get results with **scoring** (relevance)
 
@@ -343,11 +343,11 @@ Where _must_ is and array that implies **AND**. _bool_ also supports _should_ im
 
 Moreover we used the _range_ query with age "lt" **less than** 40. where _range_ also supports "lte", "gt", and "gte" 
 
-####2. Filters 
+####b. Filters 
 
 Filters are **non-scoring** queries that can be used if the score has no importance. It's returns a _boolean_ that answers with yes or no **where the score is always = 1**
 
-so executing the following filter has no significance: 
+so executing the following filter has no significance on the score, but will return only 2 docs: 
 
 ```
 POST localhost:9200/test/users/_search
@@ -361,11 +361,9 @@ POST localhost:9200/test/users/_search
 }
 ``` 
 
-Again it will return all the docs that match with a score equal to 1.
+Whereas combining this with a previous query will:
 
-Whereas combining this with the previous query will:
-
- - Find Where level = "super awesome" and only return the "male" gender
+ - level = "super awesome" and only return the "male" gender
 
 ```
 POST localhost:9200/test/users/_search
@@ -384,7 +382,76 @@ POST localhost:9200/test/users/_search
 }
 ```
  
-This will return only 2 users Bam and Johnny **scoring** 0.2712221 and 0.09848769 respectively 
+This will return only 2 users Bam and Johnny **scoring** 0.2712221 and 0.09848769 respectively. Where Bam is a more relevant user than Johnny.
+
+Now although this works fine but it is bad for performance since it will execute the query first then apply the filter returned results. 
+
+To force ES to apply the filter before in order limit the number of docs then apply the query we should wrap everything in a bool clause then add the filter next to **must**: 
+
+
+```
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "level": "super awesome"
+                    }
+                }
+            ],
+            "filter": {
+                "match": {
+                    "gender": "male"
+                }
+            }
+        }    
+    }
+}
+``` 
+
+<br>
+**more more more...**
+
+now to find the following
+
+ - level = "super awesome", and age < 40 but only return gender = "male"
+
+we would write:
+```
+{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match": {
+                        "level": "super awesome"
+                    }
+                },
+                {
+                    "range": {
+                        "age": {
+                            "lt": 40
+                        }
+                    }
+                }
+            ],
+            "filter": {
+                "match": {
+                    "gender": "male"
+                }
+            }
+        }    
+    }
+}
+```
+ 
+This will return only 1 user Bam **scoring**  1.0253175.
+
+**Important note** we can also combine more than 1 filter using the bool 
 
 So as ES states it: "As a general rule, use query clauses for full-text search or for any condition that should affect the relevance score, and use filters for everything else."
+
+
+####c. Aggregations
 
