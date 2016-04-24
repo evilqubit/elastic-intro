@@ -220,7 +220,7 @@ Queries is what we use to get results with **scoring** (relevance)
 
 To ask a question like
  
- - get a doc WHERE level = "super awesome". using the _match_ query we would write: 
+ - Find WHERE level = "super awesome". using the _match_ query we would write: 
 
 ```
 {
@@ -232,3 +232,98 @@ To ask a question like
 }
 ``` 
 
+the response will be: 
+
+```
+{
+  "took": 19,
+  "timed_out": false,
+  "_shards": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0
+  },
+  "hits": {
+    "total": 3,
+    "max_score": 0.2712221,
+    "hits": [
+      {
+        "_index": "test",
+        "_type": "users",
+        "_id": "AVRQQlCE0YBBUjDwpzQZ",
+        "_score": 0.2712221,
+        "_source": {
+          "first_name": "Bam",
+          "level": "super awesome",
+          ...
+        }
+      },
+      {
+        "_index": "test",
+        "_type": "users",
+        "_id": "AVRQRtYW0YBBUjDwpzQa",
+        "_score": 0.09848769,
+        "_source": {
+          "first_name": "Stephanie",
+          "level": "awesome",
+          ...
+        }
+      },
+      {
+        "_index": "test",
+        "_type": "users",
+        "_id": "AVRQRx-E0YBBUjDwpzQf",
+        "_score": 0.09848769,
+        "_source": {
+          "first_name": "Johnny",
+          "level": "awesome",
+          ...
+        }
+      }
+    ]
+  }
+}
+```
+
+As we can see that the user _Bam_ scored the highest of 0.2712221 since his level was "super awesome ", whereas _Stephanie_ &  _Johnny_ scored an equal 0.09848769 for their level was just "awesome"
+
+####2. Filters 
+
+Filters are **non-scoring** queries that can be used if the score has no importance. It's returns a _boolean_ answer with yes or no **where the score is always equal to 1**
+
+so executing the following filter has no significance: 
+
+```
+{
+    "filter": {
+       "match": {
+            "gender": "male"
+        }
+    }
+}
+``` 
+
+Again it will return all the docs that match with a score equal to 1.
+
+Whereas combining this with the previous query will:
+
+ - Find Where level = "super awesome" and only return the "male" gender
+
+```
+{
+     "query": {
+        "match": {
+            "level": "super awesome"
+        }
+    },
+     "filter": {
+        "match": {
+            "gender": "male"
+        }
+    }
+}
+```
+ 
+This will return only 2 users Bam and Johnny **scoring** 0.2712221 and 0.09848769 respectively 
+
+so as ES states it: "As a general rule, use query clauses for full-text search or for any condition that should affect the relevance score, and use filters for everything else."
