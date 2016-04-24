@@ -312,7 +312,7 @@ this query will return **only** Bam
 
 To combine more than one query together we can use the _Query clause_  to find: 
 
- - level = "super awesome" and "age" < 40
+ - level = "super awesome" AND "age" < 40
 
 ```
 POST localhost:9200/test/users/_search
@@ -361,9 +361,9 @@ POST localhost:9200/test/users/_search
 }
 ``` 
 
-Whereas combining this with a previous query will:
+Whereas combining this with a previous query:
 
- - level = "super awesome" and only return the "male" gender
+ - level = "super awesome" AND only return gender = "male"
 
 ```
 POST localhost:9200/test/users/_search
@@ -382,9 +382,9 @@ POST localhost:9200/test/users/_search
 }
 ```
  
-This will return only 2 users Bam and Johnny **scoring** 0.2712221 and 0.09848769 respectively. Where Bam is a more relevant user than Johnny.
+This will return only 2 users Bam and Johnny **scoring** 0.2712221 and 0.09848769 respectively. Where Bam has a more relevant level than Johnny.
 
-Now although this works fine but it is bad for performance since it will execute the query first then apply the filter returned results. 
+Although this works fine but it is **bad for performance** since it will execute the query first then apply the filter returned results. 
 
 To force ES to apply the filter before in order limit the number of docs then apply the query we should wrap everything in a bool clause then add the filter next to **must**: 
 
@@ -412,8 +412,6 @@ To force ES to apply the filter before in order limit the number of docs then ap
 
 <br>
 **more more more...**
-
-now to find the following
 
  - level = "super awesome", and age < 40 but only return gender = "male"
 
