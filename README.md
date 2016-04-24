@@ -3,7 +3,7 @@ Every time you store data in _Elasticsearch_ it get's saved inside an **index** 
 
 convention: 
 ```
-localhost:9200/index/type/
+localhost:9200/{index}/{type}/
 ```
 
 **Important note** different types living in the same index cannot have the same field name with different config or field type
@@ -27,7 +27,7 @@ localhost:9200/test/city/1
 }
 ```
 
-When developing with elasticsearch there are 3 main steps we have to consider. **Mapping**, **Indexing**, and **Querying** data
+When developing with elasticsearch there are 3 main steps we have to consider. **Mapping**, **Indexing**, and **Searching** data
 
 ###1. Mapping
 
@@ -64,6 +64,9 @@ PUT localhost:9200/test/
                 "gender": {
                     "type": "string"
                 },
+                "level": {
+		            "type": "string"
+		        },
                 "last_name": {
                     "type": "string"
                 }
@@ -73,7 +76,7 @@ PUT localhost:9200/test/
 }
 
 ```
-so creating an _Index_ called test, a _type_ called users with 4 fields that it contains.
+so creating an _Index_ called test, a _type_ called users with 5 fields that it contains.
 
 note that field types can have the following values: _string_, _date_, _long_, _double_, _boolean_, _ip_, _object_, _nested_, _geo_point_, _geo_shape_
 
@@ -99,16 +102,18 @@ POST localhost:9200/test/users/
     "first_name": "Bam",
     "last_name": "Margera",
     "gender": "male",
+    "level": "super awesome",
     "age": 36
 }
 
 POST localhost:9200/test/users/
 
 {
-    "first_name": "Jason",
-    "last_name": "Acuña",
-    "gender": "male",
-    "age": 31
+    "first_name": "Stephanie",
+    "last_name": "Hodge",
+    "gender": "female",
+    "level": "awesome",
+    "age": 34
 }
 
 POST localhost:9200/test/users/
@@ -117,6 +122,7 @@ POST localhost:9200/test/users/
     "first_name": "Johnny",
     "last_name": "Knoxville",
     "gender": "male",
+    "level": "awesome",
     "age": 45
 }
 
@@ -139,7 +145,7 @@ on success of any of the following docs, we should see a response like this:
 }
 ```
 
-where __id_ is a generated id by ES.
+where __id_ is a generated id by ES that is 20 character long, URL-safe, Base64-encoded GUID string.
 
 we can also specify our own id after the type like this: 
 
@@ -149,6 +155,80 @@ POST localhost:9200/test/users/MyID123
     "first_name": "Bam",
     "last_name": "Margera",
     "gender": "male",
+    "level": "super awesome",
     "age": 36
 }
 ```
+
+Now what we have our data indexed let's move forward to query it.
+
+###3. Searching
+
+In this section we will cover ES _Queries_, _Filters_, and _Aggregations_ for search
+
+To search in a specific _index_ and _type_ the following convention is used: 
+
+```
+POST localhost:9200/test/users/_search
+```
+
+so now by hitting this request, the response will look like: 
+
+```
+{
+  "took": 4,
+  "timed_out": false,
+  "_shards": {
+    "total": 5,
+    "successful": 5,
+    "failed": 0
+  },
+  "hits": {
+    "total": 3,
+    "max_score": 1,
+    "hits": [
+      {
+        "_index": "test",
+        "_type": "users",
+        "_id": "AVRQQlCE0YBBUjDwpzQZ",
+        "_score": 1,
+        "_source": {
+          "first_name": "Bam",
+          "last_name": "Margera",
+          "gender": "male",
+          "level": "super awesome",
+          "age": 36
+        }
+      },
+      **... the other 2 docs go here**
+    ]
+  }
+}
+```
+
+By looking at this response we can see that the data that we inserted is found inside the hits.hits _array_ included inside the __source_ _object_
+
+and since we didn't actually specify anything to search for we'll get a __score_ of 1 for all docs. 
+
+on the top level hits.total is the total number of the docs we using an empty search query. and max_score is the maximum score a document can take is a specific query. in out case it's 1 since no query was specified. 
+
+in the __shards.total_ value is the number of lucene Indexed that elasticsearch created for that index. The default number is always 5 unless we specify otherwise on index creation time. more about shards is explained [here](https://www.elastic.co/guide/en/elasticsearch/guide/current/_add_an_index.html) 
+
+####1. Queries 
+
+Queries is what we use to get results with **scoring** (relevance)
+
+To ask a question like
+ 
+ - get a doc WHERE level = "super awesome". using the _match_ query we would write: 
+
+```
+{
+    "query": {
+        "match": {
+            "level": "super awesome"
+        }
+    }
+}
+``` 
+
