@@ -293,7 +293,7 @@ the response will be:
 As we can see that the user _Bam_ scored the highest of 0.2712221 since his level was "super awesome ", whereas _Stephanie_ &  _Johnny_ scored an equal 0.09848769 for their level was just "awesome"
 
 
-where as for **exact values** on _non-analyzed_ fields, _numbers_, _dates_, and _Booleans_, it's better to use the _Term Query_ :
+whereas for **exact values** on _non-analyzed_ fields, _numbers_, _dates_, and _Booleans_, it's better to use the _Term Query_ :
 
  - age = 36
 
