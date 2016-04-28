@@ -42,6 +42,7 @@ Moving forward with this tutorial we will base our examples on the following dat
     "first_name": "bam",
     "last_name": "margera",
     "gender": "male",
+    "level": "super awesome",
     "age": 36
 }
 ``` 
