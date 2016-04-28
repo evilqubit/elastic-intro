@@ -523,7 +523,7 @@ response:
 
 what we want is every thing inside the bucket array which tells us that we have, 1 female and 2 males. 
 
-The power off aggs is that it can be combines with any filter/query. 
+The power of aggs is that it can be combined with any filter/query. 
 
 so using the last filter we did, we can simply say: 
 
