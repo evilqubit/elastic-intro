@@ -5,11 +5,9 @@ ElasticSearch has been compared to Apache Solr and offers several notable featur
  - Provides a scalable search solution.
  - Performs near-real-time searches.
  - Provides support for multi-tenancy.
- - Streamlines backup processes and ensures data integrity.
  - An index can be easily recovered in a case of a server crash.
  - Uses Javascript Object Notation (JSON) and Java application program interfaces (APIs).
  - Automatically indexes JSON documents.
- - Indexing uses unique type-level identifiers.
  - Each index can have its own settings.
  - Searches can be done with Lucene-based querystrings.
 
