@@ -466,7 +466,7 @@ So as ES states it: "As a general rule, use query clauses for full-text search o
  
  In this tutorial I'm gonna cover the _Term Aggregations_ which is a part of the Bucket Aggregations. 
 
- - how many females and males We,v got in our Index/type ?
+ - how many females and males We,ve got in our Index/type ?
 
 we can write the following: 
 
